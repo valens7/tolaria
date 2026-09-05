@@ -82,11 +82,15 @@ jobs:
           sed -i '' "s/^version = \".*\"/version = \"$VERSION\"/" src-tauri/Cargo.toml
 
       - name: Import Apple Developer certificate into keychain
-        if: ${{ secrets.APPLE_CERTIFICATE != '' && secrets.APPLE_CERTIFICATE_PASSWORD != '' }}
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
         run: |
+          if [ -z "$APPLE_CERTIFICATE" ] || [ -z "$APPLE_CERTIFICATE_PASSWORD" ]; then
+            echo "Apple Developer certificate is not configured; continuing with private dogfood signing."
+            exit 0
+          fi
+
           CERT_PATH="$RUNNER_TEMP/apple_cert.p12"
           KEYCHAIN_PATH="$RUNNER_TEMP/mora-signing.keychain-db"
           KEYCHAIN_PASSWORD="$(uuidgen)"
@@ -100,13 +104,17 @@ jobs:
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
 
       - name: Validate telemetry env
-        if: ${{ secrets.VITE_SENTRY_DSN != '' && secrets.SENTRY_DSN != '' && secrets.VITE_POSTHOG_KEY != '' && secrets.VITE_POSTHOG_HOST != '' }}
         env:
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_POSTHOG_KEY: ${{ secrets.VITE_POSTHOG_KEY }}
           VITE_POSTHOG_HOST: ${{ secrets.VITE_POSTHOG_HOST }}
         run: |
+          if [ -z "$VITE_SENTRY_DSN" ] || [ -z "$SENTRY_DSN" ] || [ -z "$VITE_POSTHOG_KEY" ] || [ -z "$VITE_POSTHOG_HOST" ]; then
+            echo "Telemetry is not configured; skipping telemetry validation for private dogfood."
+            exit 0
+          fi
+
           python3 <<'PY'
           import os
           import re
