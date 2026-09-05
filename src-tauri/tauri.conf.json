@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Tolaria",
+  "productName": "Mora",
   "version": "0.1.0",
-  "identifier": "club.refactoring.tolaria",
+  "identifier": "com.alphaoneplus.mora",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5202",
@@ -14,7 +14,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "Tolaria",
+        "title": "Mora",
         "width": 1400,
         "height": 900,
         "minWidth": 480,
@@ -78,17 +78,17 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["tolaria"]
+        "schemes": ["mora"]
       }
     },
     "updater": {
       "endpoints": [
-        "https://refactoringhq.github.io/tolaria/stable/latest.json"
+        "https://valens7.github.io/tolaria/stable/latest.json"
       ],
       "windows": {
         "installMode": "passive"
       },
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEE4NkQ5MDI3REVCRkFGNUMKUldSY3I3L2VKNUJ0cU5JRlRZZlp3NGhnU3ZwbkVKeGVvREpmb2sxRVJndHFpVFZPNlArbEE5R1IK"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDUzN0FGRERBREMyMDM0QjkKUldTNU5DRGMydjE2VTBKdGEwNTZIVGxkZmlxbmtURWNIVlBpYm1Fem5DeWs5dHVGTHZpcTdLZDAK"
     }
   }
 }

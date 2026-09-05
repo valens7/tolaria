@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 
 const APP_CONFIG_POLICY_JSON: &str = include_str!("../../mcp-server/app-config-policy.json");
-const APP_CONFIG_NAMESPACE_ENV: &str = "TOLARIA_APP_CONFIG_NAMESPACE";
+const APP_CONFIG_NAMESPACE_ENV: &str = "MORA_APP_CONFIG_NAMESPACE";
 
 #[derive(Debug, Deserialize)]
 struct AppConfigPolicy {
@@ -203,20 +203,20 @@ mod tests {
     }
 
     #[test]
-    fn preferred_path_uses_tolaria_namespace() {
+    fn preferred_path_uses_mora_namespace() {
         let config_dir = absolute_temp_dir("tolaria-config-root");
         let path = preferred_path_in(&config_dir, "settings.json");
         assert_eq!(
             path,
-            config_dir.join("com.tolaria.app").join("settings.json")
+            config_dir.join("com.alphaoneplus.mora").join("settings.json")
         );
     }
 
     #[test]
     fn declared_development_namespace_can_replace_current_namespace() {
         assert_eq!(
-            app_config_policy().current_namespace_for(Some("com.tolaria.app.dev")),
-            "com.tolaria.app.dev"
+            app_config_policy().current_namespace_for(Some("com.alphaoneplus.mora.dev")),
+            "com.alphaoneplus.mora.dev"
         );
     }
 
@@ -224,7 +224,7 @@ mod tests {
     fn unknown_requested_namespace_keeps_production_namespace() {
         assert_eq!(
             app_config_policy().current_namespace_for(Some("com.example.other")),
-            "com.tolaria.app"
+            "com.alphaoneplus.mora"
         );
     }
 

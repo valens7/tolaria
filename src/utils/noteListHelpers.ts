@@ -18,6 +18,7 @@ import { evaluateView } from './viewFilters'
 import { viewMatchesSelection } from './viewIdentity'
 import { wikilinkTarget, resolveEntry } from './wikilink'
 import { buildTypeVisibilityLookup, isSectionEntryVisibleForType } from './typeVisibility'
+import { moraMemoIdentityFromEntry } from '../mora/moraMemoSourcePaths'
 
 export type NoteListFilter = 'open' | 'archived'
 
@@ -540,6 +541,9 @@ function filterByKind(
   options: FilterEntriesOptions,
 ): VaultEntry[] {
   if (selection.kind === 'entity') return []
+  if (selection.kind === 'moraMemoTimeline') return entries.filter((entry) => (
+    !entry.archived && moraMemoIdentityFromEntry(entry) !== null
+  ))
   if (selection.kind === 'view') return filterViewEntries(entries, selection, options.views)
   if (selection.kind === 'folder') return filterFolderEntries(entries, selection, options.subFilter)
   if (selection.kind === 'sectionGroup') return filterSectionGroupEntries(entries, selection.type, options.subFilter)

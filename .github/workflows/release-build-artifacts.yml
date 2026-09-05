@@ -16,7 +16,7 @@ on:
 
 env:
   # Bump this when Tauri/Rust target artifacts capture stale absolute paths.
-  RUST_TARGET_CACHE_VERSION: v2026-04-14-tolaria
+  RUST_TARGET_CACHE_VERSION: v2026-09-06-mora
   # The production Vite bundle can exceed Node's default ~2GB heap on
   # macOS arm64 runners while Tauri runs beforeBuildCommand.
   NODE_OPTIONS: --max-old-space-size=4096
@@ -82,12 +82,13 @@ jobs:
           sed -i '' "s/^version = \".*\"/version = \"$VERSION\"/" src-tauri/Cargo.toml
 
       - name: Import Apple Developer certificate into keychain
+        if: ${{ secrets.APPLE_CERTIFICATE != '' && secrets.APPLE_CERTIFICATE_PASSWORD != '' }}
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
         run: |
           CERT_PATH="$RUNNER_TEMP/apple_cert.p12"
-          KEYCHAIN_PATH="$RUNNER_TEMP/laputa-signing.keychain-db"
+          KEYCHAIN_PATH="$RUNNER_TEMP/mora-signing.keychain-db"
           KEYCHAIN_PASSWORD="$(uuidgen)"
           echo "$APPLE_CERTIFICATE" | base64 --decode > "$CERT_PATH"
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
@@ -99,6 +100,7 @@ jobs:
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
 
       - name: Validate telemetry env
+        if: ${{ secrets.VITE_SENTRY_DSN != '' && secrets.SENTRY_DSN != '' && secrets.VITE_POSTHOG_KEY != '' && secrets.VITE_POSTHOG_HOST != '' }}
         env:
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
@@ -189,8 +191,8 @@ jobs:
 
       - name: Build Tauri app (with signing + notarization)
         env:
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.MORA_TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.MORA_TAURI_KEY_PASSWORD }}
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
@@ -297,8 +299,8 @@ jobs:
       - name: Build Tauri app (Linux bundles)
         env:
           APPIMAGE_EXTRACT_AND_RUN: 1
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.MORA_TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.MORA_TAURI_KEY_PASSWORD }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           VITE_SENTRY_RELEASE: ${{ inputs.version }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
@@ -475,8 +477,8 @@ jobs:
         id: windows-signing
         shell: bash
         env:
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.MORA_TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.MORA_TAURI_KEY_PASSWORD }}
           WINDOWS_CODE_SIGNING_CERTIFICATE: ${{ secrets.WINDOWS_CODE_SIGNING_CERTIFICATE }}
           WINDOWS_CODE_SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CODE_SIGNING_CERTIFICATE_PASSWORD }}
           WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
@@ -527,8 +529,8 @@ jobs:
       - name: Build Tauri app (Windows bundles)
         shell: pwsh
         env:
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.MORA_TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.MORA_TAURI_KEY_PASSWORD }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           VITE_SENTRY_RELEASE: ${{ inputs.version }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

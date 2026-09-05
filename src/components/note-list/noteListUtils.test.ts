@@ -50,6 +50,11 @@ describe('resolveHeaderTitle', () => {
     expect(resolveHeaderTitle(selection, null, [], 'zh-CN')).toBe('归档')
   })
 
+  it('labels the Memo Timeline without creating a separate editor view', () => {
+    expect(resolveHeaderTitle({ kind: 'moraMemoTimeline' }, null)).toBe('Memo Timeline')
+    expect(resolveHeaderTitle({ kind: 'moraMemoTimeline' }, null, [], 'zh-CN')).toBe('Memo 时间线')
+  })
+
   it('keeps user-authored view names unchanged', () => {
     const selection = { kind: 'view', filename: 'custom.yml' }
 

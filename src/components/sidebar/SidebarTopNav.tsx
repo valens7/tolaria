@@ -49,6 +49,12 @@ export function SidebarTopNav(options: SidebarTopNavProps) {
         onClick={() => onSelect({ kind: 'filter', filter: 'all' })}
       />
       <NavItem
+        icon={FileText}
+        label={translate(locale, 'sidebar.nav.memoTimeline')}
+        isActive={isSelectionActive(selection, { kind: 'moraMemoTimeline' })}
+        onClick={() => onSelect({ kind: 'moraMemoTimeline' })}
+      />
+      <NavItem
         icon={Archive}
         label={translate(locale, 'sidebar.nav.archive')}
         count={archivedCount}

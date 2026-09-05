@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const localesDir = path.join(root, 'src/lib/locales')
 const sourcePath = path.join(localesDir, 'en.json')
+const activeLocaleFiles = new Set(['en.json', 'zh-CN.json'])
 
 function readCatalog(filePath) {
   return JSON.parse(readUtf8File(filePath))
@@ -112,7 +113,9 @@ assertFlatStringCatalog('en', sourceCatalog)
 
 const sourceKeys = Object.keys(sourceCatalog).sort()
 ensureDirectory(localesDir)
-const localeFiles = directoryFiles(localesDir).filter((file) => file.endsWith('.json'))
+const localeFiles = directoryFiles(localesDir)
+  .filter((file) => activeLocaleFiles.has(file))
+  .sort()
 const issues = []
 
 for (const file of localeFiles) {

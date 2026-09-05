@@ -36,6 +36,8 @@ export function selectionsEqual(a: SidebarSelection, b: SidebarSelection): boole
   switch (a.kind) {
     case 'filter':
       return isSameFilterSelection(a, b as Extract<SidebarSelection, { kind: 'filter' }>)
+    case 'moraMemoTimeline':
+      return true
     case 'sectionGroup':
       return isSameSectionSelection(a, b as Extract<SidebarSelection, { kind: 'sectionGroup' }>)
     case 'folder':

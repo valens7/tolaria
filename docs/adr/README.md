@@ -230,4 +230,5 @@ proposed → active → superseded
 | [0172](0172-local-codescene-change-safeguards.md) | Local CodeScene safeguards before commits and direct-to-main pushes | active |
 | [0175](0175-mcp-vault-lifecycle-uses-app-registry.md) | MCP vault lifecycle uses the app registry | active |
 | [0176](0176-bundled-font-assets-for-offline-startup.md) | Bundled font assets for offline startup | active |
+| [0179](0179-mora-owned-release-identity-and-vault-continuity.md) | Mora-owned release identity and vault continuity | active |
 | [0173](0173-future-calendar-version-recovery.md) | Future calendar version rejection and recovery | active |

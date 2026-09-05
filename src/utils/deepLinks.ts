@@ -2,7 +2,7 @@ import type { VaultEntry } from '../types'
 import { joinVaultPath, normalizeNotePathForCollision, normalizeNotePathForIdentity, normalizeNotePathSeparators } from './notePathIdentity'
 import { workspaceAliasFromOption } from './workspaces'
 
-export const TOLARIA_DEEP_LINK_SCHEME = 'tolaria'
+export const MORA_DEEP_LINK_SCHEME = 'mora'
 
 export interface DeepLinkVault {
   alias?: string | null
@@ -139,7 +139,7 @@ function decodeRelativePath({ path }: VaultRelativePathInput): string | null {
 }
 
 function rawPathnameForTolariaUrl({ rawUrl }: TolariaDeepLinkInput): string | null {
-  return rawUrl.match(/^tolaria:\/\/[^/?#]+(\/[^?#]*)/iu)?.[1] ?? null
+  return rawUrl.match(/^mora:\/\/[^/?#]+(\/[^?#]*)/iu)?.[1] ?? null
 }
 
 function isSafePathSegment({ segment }: { segment: string }): boolean {
@@ -198,7 +198,7 @@ export function parseTolariaDeepLink({ rawUrl }: TolariaDeepLinkInput): ParsedTo
     return { ok: false, error: 'malformed_url' }
   }
 
-  if (parsed.protocol !== `${TOLARIA_DEEP_LINK_SCHEME}:`) return { ok: false, error: 'invalid_scheme' }
+  if (parsed.protocol !== `${MORA_DEEP_LINK_SCHEME}:`) return { ok: false, error: 'invalid_scheme' }
   if (!parsed.hostname) return { ok: false, error: 'missing_vault' }
 
   const rawPathname = rawPathnameForTolariaUrl({ rawUrl })
@@ -239,6 +239,6 @@ export function buildTolariaDeepLinkForEntry({
   const slug = vaultDeepLinkSlug(vault, vaults)
   return {
     ok: true,
-    url: `${TOLARIA_DEEP_LINK_SCHEME}://${slug}/${encodeRelativePath({ path: relativePath })}`,
+    url: `${MORA_DEEP_LINK_SCHEME}://${slug}/${encodeRelativePath({ path: relativePath })}`,
   }
 }

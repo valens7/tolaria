@@ -32,6 +32,16 @@ export function collectionFromSelection(
     return builtinCollection(selection)
   }
 
+  if (selection.kind === 'moraMemoTimeline') {
+    return {
+      id: 'mora-memo-timeline',
+      label: 'Memo Timeline',
+      origin: 'builtin',
+      selection,
+      presentation: defaultListPresentation(),
+    }
+  }
+
   if (selection.kind === 'sectionGroup') {
     return {
       id: `type:${selection.type}`,

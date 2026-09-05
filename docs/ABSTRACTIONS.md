@@ -929,7 +929,7 @@ No indexing step required — search runs directly against the filesystem.
 ### Vault Switching
 
 `useVaultSwitcher` hook manages multiple vaults:
-- Persists vault list to `$XDG_CONFIG_HOME/com.tolaria.app/vaults.json`, defaulting to `$HOME/.config/com.tolaria.app/vaults.json` on Unix platforms. App config path policy is declared once in `mcp-server/app-config-policy.json` and consumed by both the Rust app helper and Node MCP server: reads check the current Tolaria namespace, then legacy `com.laputa.app`, first in the preferred config root and then in the platform config root when it differs; writes target the current namespace in the preferred root.
+- Persists vault list to `$XDG_CONFIG_HOME/com.alphaoneplus.mora/vaults.json`, defaulting to `$HOME/.config/com.alphaoneplus.mora/vaults.json` on Unix platforms. App config path policy is declared once in `mcp-server/app-config-policy.json` and consumed by both the Rust app helper and Node MCP server: reads check the current Mora namespace, then the reserved Mora legacy namespace, first in the preferred config root and then in the platform config root when it differs; writes target the current namespace in the preferred root. The registry records a selected Vault path but stores no Vault content; normal application updates leave that Vault untouched.
 - Switching closes all tabs and resets sidebar
 - Supports adding, removing, hiding/restoring vaults
 - MCP `attach_vault` and `clone_vault` write through the same registry, preserve the current active vault, update the calling MCP service immediately, and notify running renderers to reload mounted-workspace metadata. Attach never initializes Git; clone stages into a temporary sibling before atomic publication and delegates authentication to system Git.

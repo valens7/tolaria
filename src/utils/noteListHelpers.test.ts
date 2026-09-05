@@ -35,6 +35,19 @@ describe('filterEntries', () => {
     expect(result).toHaveLength(0)
   })
 
+  it('keeps the Memo Timeline on existing canonical Memo Markdown entries', () => {
+    const entries = [
+      makeEntry({ path: '/vault/10 Sources/10 Memos/2026/09/idea.md', title: 'Idea', properties: { memo_id: 'memo_01J7X' } }),
+      makeEntry({ path: '/vault/10 Sources/10 Memos/2026/09/legacy.md', title: 'Legacy Memo' }),
+      makeEntry({ path: '/vault/10 Sources/20 Meetings/standup.md', title: 'Meeting', properties: { memo_id: 'memo_01J7Y' } }),
+      makeEntry({ path: '/vault/10 Sources/10 Memos/2026/09/archived.md', title: 'Archived Memo', archived: true, properties: { memo_id: 'memo_01J7Z' } }),
+    ]
+
+    expect(filterEntries(entries, { kind: 'moraMemoTimeline' }).map((entry) => entry.path)).toEqual([
+      '/vault/10 Sources/10 Memos/2026/09/idea.md',
+    ])
+  })
+
   it('filters section groups by open sub-filter', () => {
     const entries = [
       makeEntry({ path: '/1.md', title: 'Active', isA: 'Project' }),

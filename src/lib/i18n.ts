@@ -1,31 +1,10 @@
 import EN_TRANSLATIONS from './locales/en.json'
+import ZH_CN_TRANSLATIONS from './locales/zh-CN.json'
 
 export const DEFAULT_APP_LOCALE = 'en'
 export const SYSTEM_UI_LANGUAGE = 'system'
 
-export const APP_LOCALES = [
-  'en',
-  'it-IT',
-  'fr-FR',
-  'de-DE',
-  'ru-RU',
-  'es-ES',
-  'pt-BR',
-  'pt-PT',
-  'es-419',
-  'zh-CN',
-  'zh-TW',
-  'ja-JP',
-  'ko-KR',
-  'vi',
-  'pl-PL',
-  'be-BY',
-  'be-Latn',
-  'id-ID',
-  'uk-UA',
-  'sv-SE',
-  'sk-SK',
-] as const
+export const APP_LOCALES = ['en', 'zh-CN'] as const
 
 export type AppLocale = typeof APP_LOCALES[number]
 export type UiLanguagePreference = typeof SYSTEM_UI_LANGUAGE | AppLocale
@@ -49,167 +28,12 @@ const LOCALE_DEFINITIONS: Record<AppLocale, LocaleDefinition> = {
     aliases: ['en', 'en-us', 'en-gb', 'en-ca', 'en-au'],
     searchKeywords: ['english', 'en'],
   },
-  'it-IT': {
-    code: 'it-IT',
-    dateLocale: 'it-IT',
-    labelKey: 'locale.itIT',
-    aliases: ['it', 'it-it'],
-    searchKeywords: ['italian', 'italiano', 'it', 'it-it'],
-  },
-  'fr-FR': {
-    code: 'fr-FR',
-    dateLocale: 'fr-FR',
-    labelKey: 'locale.frFR',
-    aliases: ['fr', 'fr-fr'],
-    searchKeywords: ['french', 'francais', 'français', 'fr', 'fr-fr'],
-  },
-  'de-DE': {
-    code: 'de-DE',
-    dateLocale: 'de-DE',
-    labelKey: 'locale.deDE',
-    aliases: ['de', 'de-de'],
-    searchKeywords: ['german', 'deutsch', 'de', 'de-de'],
-  },
-  'ru-RU': {
-    code: 'ru-RU',
-    dateLocale: 'ru-RU',
-    labelKey: 'locale.ruRU',
-    aliases: ['ru', 'ru-ru'],
-    searchKeywords: ['russian', 'russkiy', 'русский', 'ru', 'ru-ru'],
-  },
-  'es-ES': {
-    code: 'es-ES',
-    dateLocale: 'es-ES',
-    labelKey: 'locale.esES',
-    aliases: ['es-es'],
-    searchKeywords: ['spanish', 'espanol', 'español', 'spain', 'es', 'es-es'],
-  },
-  'pt-BR': {
-    code: 'pt-BR',
-    dateLocale: 'pt-BR',
-    labelKey: 'locale.ptBR',
-    aliases: ['pt-br'],
-    searchKeywords: ['portuguese', 'brasil', 'brazilian', 'pt', 'pt-br'],
-  },
-  'pt-PT': {
-    code: 'pt-PT',
-    dateLocale: 'pt-PT',
-    labelKey: 'locale.ptPT',
-    aliases: ['pt-pt'],
-    searchKeywords: ['portuguese', 'portugal', 'european', 'pt-pt'],
-  },
-  'es-419': {
-    code: 'es-419',
-    dateLocale: 'es-419',
-    labelKey: 'locale.es419',
-    aliases: [
-      'es-419',
-      'es-ar',
-      'es-bo',
-      'es-cl',
-      'es-co',
-      'es-cr',
-      'es-cu',
-      'es-do',
-      'es-ec',
-      'es-gt',
-      'es-hn',
-      'es-mx',
-      'es-ni',
-      'es-pa',
-      'es-pe',
-      'es-pr',
-      'es-py',
-      'es-sv',
-      'es-us',
-      'es-uy',
-      'es-ve',
-    ],
-    searchKeywords: ['spanish', 'latin', 'latam', 'latin america', 'es-419'],
-  },
   'zh-CN': {
     code: 'zh-CN',
     dateLocale: 'zh-CN',
     labelKey: 'locale.zhCN',
     aliases: ['zh', 'zh-cn', 'zh-hans', 'zh-sg'],
     searchKeywords: ['chinese', 'simplified', 'zh', 'zh-cn', '中文', '简体中文'],
-  },
-  'zh-TW': {
-    code: 'zh-TW',
-    dateLocale: 'zh-TW',
-    labelKey: 'locale.zhTW',
-    aliases: ['zh-tw', 'zh-hant', 'zh-hk', 'zh-mo'],
-    searchKeywords: ['chinese', 'traditional', 'zh-tw', 'zh-hant', '中文', '繁體中文', '繁体中文'],
-  },
-  'ja-JP': {
-    code: 'ja-JP',
-    dateLocale: 'ja-JP',
-    labelKey: 'locale.jaJP',
-    aliases: ['ja', 'ja-jp'],
-    searchKeywords: ['japanese', 'nihongo', '日本語', 'ja', 'ja-jp'],
-  },
-  'ko-KR': {
-    code: 'ko-KR',
-    dateLocale: 'ko-KR',
-    labelKey: 'locale.koKR',
-    aliases: ['ko', 'ko-kr'],
-    searchKeywords: ['korean', 'hangul', '한국어', 'ko', 'ko-kr'],
-  },
-  vi: {
-    code: 'vi',
-    dateLocale: 'vi-VN',
-    labelKey: 'locale.vi',
-    aliases: ['vi', 'vi-vn'],
-    searchKeywords: ['vietnamese', 'vietnam', 'viet nam', 'tiếng việt', 'tieng viet', 'việt nam', 'vi'],
-  },
-  'pl-PL': {
-    code: 'pl-PL',
-    dateLocale: 'pl-PL',
-    labelKey: 'locale.plPL',
-    aliases: ['pl', 'pl-pl'],
-    searchKeywords: ['polish', 'polski', 'polska', 'pl', 'pl-pl'],
-  },
-  'be-BY': {
-    code: 'be-BY',
-    dateLocale: 'be-BY',
-    labelKey: 'locale.beBY',
-    aliases: ['be', 'be-by'],
-    searchKeywords: ['belarusian', 'беларуская', 'be', 'be-by'],
-  },
-  'be-Latn': {
-    code: 'be-Latn',
-    dateLocale: 'be-Latn',
-    labelKey: 'locale.beLatn',
-    aliases: ['be-latn'],
-    searchKeywords: ['belarusian', 'bielaruskaja', 'lacinka', 'be-latn'],
-  },
-  'id-ID': {
-    code: 'id-ID',
-    dateLocale: 'id-ID',
-    labelKey: 'locale.idID',
-    aliases: ['id','id-id'],
-    searchKeywords: ['indonesia', 'indonesian', 'bahasa', 'idn', 'id', 'id-id'],
-  },
-  'uk-UA': {
-    code: 'uk-UA',
-    dateLocale: 'uk-UA',
-    labelKey: 'locale.ukUA',
-    aliases: ['uk', 'uk-ua'],
-    searchKeywords: ['ukrainian', 'українська', 'ukrayinska', 'uk', 'uk-ua'],
-  },
-  'sv-SE': {
-    code: 'sv-SE',
-    dateLocale: 'sv-SE',
-    labelKey: 'locale.svSE',
-    aliases: ['sv', 'sv-se'],
-    searchKeywords: ['swedish', 'svenska', 'sverige', 'sv', 'sv-se'],
-  },
-  'sk-SK': {
-    code: 'sk-SK',
-    dateLocale: 'sk-SK',
-    labelKey: 'locale.skSK',
-    aliases: ['sk', 'sk-sk'],
-    searchKeywords: ['slovak', 'slovencina', 'slovenčina', 'slovensko', 'sk', 'sk-sk'],
   },
 }
 
@@ -226,29 +50,13 @@ for (const locale of APP_LOCALES) {
   }
 }
 
-const LOCALE_MODULES = import.meta.glob('./locales/*.json', { eager: true, import: 'default' }) as Record<string, TranslationCatalog>
-const TRANSLATIONS: Partial<Record<AppLocale, Partial<Record<TranslationKey, string>>>> = buildTranslations()
+const TRANSLATIONS: Partial<Record<AppLocale, Partial<Record<TranslationKey, string>>>> = {
+  en: EN_TRANSLATIONS,
+  'zh-CN': ZH_CN_TRANSLATIONS,
+}
 
 export const APP_LOCALE_DEFINITIONS = APP_LOCALES.map((locale) => getLocaleDefinition(locale))
 export { EN_TRANSLATIONS }
-
-function buildTranslations() {
-  const translations: Partial<Record<AppLocale, Partial<Record<TranslationKey, string>>>> = {
-    en: EN_TRANSLATIONS,
-  }
-
-  for (const [path, catalog] of Object.entries(LOCALE_MODULES)) {
-    const match = path.match(/\/([^/]+)\.json$/)
-    if (!match) continue
-
-    const locale = normalizeLocaleCode(match[1])
-    if (!locale || locale === 'en') continue
-
-    Reflect.set(translations, locale, catalog)
-  }
-
-  return translations
-}
 
 function isAppLocale(value: string): value is AppLocale {
   return APP_LOCALE_SET.has(value as AppLocale)
@@ -326,9 +134,7 @@ export function resolveEffectiveLocale(
   languagePreferences: readonly string[] = getBrowserLanguagePreferences(),
 ): AppLocale {
   const normalizedPreference = normalizeUiLanguagePreference(preference)
-  if (normalizedPreference && normalizedPreference !== SYSTEM_UI_LANGUAGE) {
-    return normalizedPreference
-  }
+  if (normalizedPreference && normalizedPreference !== SYSTEM_UI_LANGUAGE) return normalizedPreference
 
   for (const language of languagePreferences) {
     const locale = normalizeLocaleCode(language)

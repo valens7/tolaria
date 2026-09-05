@@ -37,6 +37,7 @@ export function resolveHeaderTitle(selection: SidebarSelection, typeDocument: Va
     return view?.definition.name ?? translate(locale, 'noteList.title.view')
   }
   if (selection.kind === 'entity') return selection.entry.title
+  if (selection.kind === 'moraMemoTimeline') return translate(locale, 'sidebar.nav.memoTimeline')
   return resolveNonEntityHeaderTitle(selection, typeDocument, locale)
 }
 

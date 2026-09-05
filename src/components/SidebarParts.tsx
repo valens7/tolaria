@@ -39,6 +39,8 @@ export function isSelectionActive(current: SidebarSelection, check: SidebarSelec
   switch (check.kind) {
     case 'filter':
       return (current as typeof check).filter === check.filter
+    case 'moraMemoTimeline':
+      return true
     case 'sectionGroup':
       return (current as typeof check).type === check.type
     case 'folder':
