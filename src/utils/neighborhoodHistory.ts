@@ -39,6 +39,8 @@ export function selectionsEqual(a: SidebarSelection, b: SidebarSelection): boole
     case 'moraHome':
     case 'moraMemosHome':
     case 'moraMemoTimeline':
+    case 'moraLearningFeed':
+    case 'moraContinueReview':
       return true
     case 'sectionGroup':
       return isSameSectionSelection(a, b as Extract<SidebarSelection, { kind: 'sectionGroup' }>)

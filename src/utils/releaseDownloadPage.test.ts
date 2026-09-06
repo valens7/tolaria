@@ -11,7 +11,7 @@ describe('release workflow macOS artifact names', () => {
     return input.split(value).length - 1
   }
 
-  it('publishes versioned Silicon and Intel artifact names', () => {
+  it('publishes the versioned Apple Silicon artifact used by stable releases', () => {
     const alphaWorkflow = readFileSync(`${process.cwd()}/.github/workflows/release.yml`, 'utf8')
     const stableWorkflow = readFileSync(
       `${process.cwd()}/.github/workflows/release-stable.yml`,
@@ -28,14 +28,9 @@ describe('release workflow macOS artifact names', () => {
       'Mora_${{ needs.version.outputs.version }}_macOS_Silicon.app.tar.gz',
     )
     expect(stableWorkflow).toContain(
-      'Mora_${{ needs.version.outputs.version }}_macOS_Intel.app.tar.gz',
-    )
-    expect(stableWorkflow).toContain(
       'Mora_${{ needs.version.outputs.version }}_macOS_Silicon.dmg',
     )
-    expect(stableWorkflow).toContain(
-      'Mora_${{ needs.version.outputs.version }}_macOS_Intel.dmg',
-    )
+    expect(stableWorkflow).not.toContain('macOS_Intel')
   })
 
   it('passes the computed build version to Sentry release env for packaged apps', () => {

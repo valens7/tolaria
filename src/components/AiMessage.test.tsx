@@ -56,15 +56,15 @@ describe('AiMessage', () => {
     render(
       <AiMessage
         userMessage="Fai qualcosa"
-        locale="it-IT"
+        locale="zh-CN"
         reasoning="Sto pensando..."
         reasoningDone
         actions={[{ tool: 'search_notes', toolId: 't1', label: 'Cercato', status: 'done' }]}
       />,
     )
 
-    expect(screen.getByRole('button', { name: /ragionamento/i })).toBeTruthy()
-    expect(screen.getByRole('button', { name: /uso degli strumenti/i })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /推理/i })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /工具使用/i })).toBeTruthy()
   })
 
   it('shows reasoning expanded while streaming (reasoningDone=false)', () => {

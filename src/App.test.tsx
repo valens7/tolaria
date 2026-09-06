@@ -450,6 +450,23 @@ vi.mock('./components/tolariaEditorFormatting', () => ({
   TolariaFormattingToolbarController: () => null,
 }))
 
+// These tests cover the inherited note-list/editor shell. Mora Home itself has
+// dedicated view tests; move through the existing Inbox route before exercising
+// the legacy shell rather than treating the new Home default as an editor.
+vi.mock('./components/MoraHomeView', async () => {
+  const React = await vi.importActual<typeof import('react')>('react')
+
+  return {
+    MoraHomeView: ({ onSelect }: { onSelect: (selection: { kind: 'filter'; filter: 'inbox' }) => void }) => {
+      React.useEffect(() => {
+        onSelect({ kind: 'filter', filter: 'inbox' })
+      }, [onSelect])
+
+      return <div data-testid="mora-home-test-route" />
+    },
+  }
+})
+
 import App from './App'
 import { TooltipProvider } from './components/ui/tooltip'
 import { useUpdater } from './hooks/useUpdater'

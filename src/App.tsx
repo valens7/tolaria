@@ -111,6 +111,7 @@ import {
 } from './lib/vaultAiGuidance'
 import { hasNoteIconValue } from './utils/noteIcon'
 import {
+  ALL_NOTES_SELECTION,
   MORA_HOME_SELECTION,
   isExplicitOrganizationEnabled,
   sanitizeSelectionForOrganization,
@@ -174,10 +175,13 @@ function App() {
 
 function MainApp({ noteWindowParams }: { noteWindowParams: NoteWindowParams | null }) {
   const aiWorkspaceWindow = false
-  const [selection, setSelection] = useState<SidebarSelection>(DEFAULT_SELECTION)
+  // A detached note window must always render the requested Markdown note, rather
+  // than inheriting the main application's Mora Home landing surface.
+  const initialSelection = noteWindowParams ? ALL_NOTES_SELECTION : DEFAULT_SELECTION
+  const [selection, setSelection] = useState<SidebarSelection>(initialSelection)
   const [noteListFilter, setNoteListFilter] = useState<NoteListFilter>('open')
   const [pendingNoteListPdfExportPath, setPendingNoteListPdfExportPath] = useState<string | null>(null)
-  const selectionRef = useRef<SidebarSelection>(DEFAULT_SELECTION)
+  const selectionRef = useRef<SidebarSelection>(initialSelection)
   const neighborhoodHistoryRef = useRef<SidebarSelection[]>([])
   const inboxPeriod: InboxPeriod = 'all'
   const handleSetSelection = useCallback((sel: SidebarSelection, options?: { preserveNeighborhoodHistory?: boolean }) => {

@@ -81,10 +81,10 @@ describe('LinuxTitlebar', () => {
   })
 
   it('localizes titlebar window control labels', () => {
-    render(<LinuxTitlebar locale="it-IT" />)
+    render(<LinuxTitlebar locale="zh-CN" />)
 
-    expect(screen.getByRole('button', { name: 'Riduci a icona' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Ingrandisci' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Chiudi' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '最小化' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '最大化' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '关闭' })).toBeTruthy()
   })
 })

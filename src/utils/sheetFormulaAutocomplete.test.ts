@@ -24,20 +24,20 @@ describe('sheetFormulaAutocomplete', () => {
   })
 
   it('localizes formula metadata for the active locale', () => {
-    const match = matchFormulaAutocomplete('=SU', 3, 'it-IT')
+    const match = matchFormulaAutocomplete('=SU', 3, 'zh-CN')
     const sum = match?.suggestions.find((suggestion) => suggestion.name === 'SUM')
 
-    expect(sum?.category).toBe(translate('it-IT', 'editor.sheet.formula.category.math'))
-    expect(sum?.description).toBe(translate('it-IT', 'editor.sheet.formula.description.sum'))
+    expect(sum?.category).toBe(translate('zh-CN', 'editor.sheet.formula.category.math'))
+    expect(sum?.description).toBe(translate('zh-CN', 'editor.sheet.formula.description.sum'))
     expect(sum?.description).not.toBe(translate('en', 'editor.sheet.formula.description.sum'))
   })
 
   it('localizes generic descriptions with the translated category placeholder', () => {
-    const match = matchFormulaAutocomplete('=AC', 3, 'it-IT')
+    const match = matchFormulaAutocomplete('=AC', 3, 'zh-CN')
     const acos = match?.suggestions.find((suggestion) => suggestion.name === 'ACOS')
-    const category = translate('it-IT', 'editor.sheet.formula.category.math')
+    const category = translate('zh-CN', 'editor.sheet.formula.category.math')
 
-    expect(acos?.description).toBe(translate('it-IT', 'editor.sheet.formula.description.generic', { category }))
+    expect(acos?.description).toBe(translate('zh-CN', 'editor.sheet.formula.description.generic', { category }))
   })
 
   it('does not suggest while typing ordinary cell references', () => {

@@ -889,7 +889,8 @@ async function createNoteImmediate(deps: ImmediateCreateDeps, request: Immediate
   const creationVaultPath = resolveImmediateCreationVaultPath(deps, request)
   const relativePath = immediateNoteRelativePath(slug, request.folderPath)
   const memoId = isMemoCapture ? createMoraMemoId() : null
-  const entry = {
+  const properties: VaultEntry['properties'] = memoId ? { memo_id: memoId } : {}
+  const entry: VaultEntry = {
     ...buildNewEntry({
       path: joinVaultPath(creationVaultPath, relativePath),
       slug,
@@ -901,7 +902,7 @@ async function createNoteImmediate(deps: ImmediateCreateDeps, request: Immediate
     // Giving it the captured snippet avoids waiting for a watcher reload before
     // it appears intelligibly in the Memos timeline.
     snippet: memoId ? (request.initialContent ?? '').trim() : '',
-    properties: memoId ? { memo_id: memoId } : {},
+    properties,
     workspace: workspaceForVaultPath(creationVaultPath, deps.vaults, deps.defaultWorkspacePath),
   }
   const resolved = applyTypeDefaults({
