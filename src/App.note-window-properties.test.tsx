@@ -222,7 +222,7 @@ describe('App note windows', () => {
     )
   })
 
-  it('loads the active vault graph in note windows while opening the requested note', async () => {
+  it('loads the active vault graph while keeping the Mora Home surface in note windows', async () => {
     renderApp(<App />)
 
     await waitFor(() => {
@@ -233,25 +233,16 @@ describe('App note windows', () => {
     })
     expect(commandResults.list_vault).toHaveBeenCalled()
 
-    await waitFor(() => {
-      expect(screen.getByTestId('mock-editor-entry-titles')).toHaveTextContent(
-        'Test Project|Software Development|Second Project',
-      )
-    })
-    expect(editorSnapshots.at(-1)).toEqual({
-      activeTabPath: activeEntry.path,
-      entryTitles: ['Test Project', 'Software Development', 'Second Project'],
-    })
+    expect(screen.getByTestId('mora-home')).toBeInTheDocument()
+    expect(editorSnapshots).toEqual([])
   })
 
-  it('does not replace the main window last-note state', async () => {
+  it('does not replace the main-window last-note state while showing Mora Home', async () => {
     localStorage.setItem(APP_STORAGE_KEYS.lastActiveNotePath, secondEntry.path)
 
     renderApp(<App />)
 
-    await waitFor(() => {
-      expect(editorSnapshots.at(-1)?.activeTabPath).toBe(activeEntry.path)
-    })
+    await waitFor(() => expect(screen.getByTestId('mora-home')).toBeInTheDocument())
     expect(localStorage.getItem(APP_STORAGE_KEYS.lastActiveNotePath)).toBe(secondEntry.path)
   })
 
