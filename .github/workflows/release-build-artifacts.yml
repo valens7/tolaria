@@ -104,6 +104,14 @@ jobs:
             echo "::error::No codesigning identity was found in the imported keychain certificate." >&2
             exit 1
           fi
+          case "$APPLE_IDENTITY" in
+            "Developer ID Application: "*) ;;
+            *)
+              echo "::error::The imported certificate is not a Developer ID Application certificate. A private dogfood DMG must not be released with an ad-hoc or development signature." >&2
+              exit 1
+              ;;
+          esac
+          echo "Using a Developer ID Application signing identity."
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
           echo "APPLE_SIGNING_IDENTITY=$APPLE_IDENTITY" >> "$GITHUB_ENV"
 
@@ -223,6 +231,25 @@ jobs:
           else
             pnpm tauri build --target ${{ matrix.target }}
           fi
+
+      - name: Verify distributable macOS app signature
+        run: |
+          APP_BUNDLE="src-tauri/target/${{ matrix.target }}/release/bundle/macos/Mora.app"
+          if [ ! -d "$APP_BUNDLE" ]; then
+            echo "::error::Expected macOS app bundle was not produced: $APP_BUNDLE" >&2
+            exit 1
+          fi
+          codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
+          SIGNING_DETAILS=$(codesign -dvvv "$APP_BUNDLE" 2>&1)
+          if printf '%s\n' "$SIGNING_DETAILS" | grep -q '^Signature=adhoc$'; then
+            echo "::error::Refusing to publish an ad-hoc-signed Mora.app." >&2
+            exit 1
+          fi
+          if ! printf '%s\n' "$SIGNING_DETAILS" | grep -q '^TeamIdentifier='; then
+            echo "::error::Mora.app has no Apple team identifier after signing." >&2
+            exit 1
+          fi
+          echo "Distributable macOS app signature verified."
 
       - name: Upload .dmg
         if: ${{ inputs.upload_macos_dmg }}
