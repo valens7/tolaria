@@ -113,10 +113,6 @@ jobs:
           normalize_macos_artifacts aarch64 \
             "updater-aarch64/Mora_${{ needs.version.outputs.version }}_macOS_Silicon.app.tar.gz" \
             "dmg-aarch64/Mora_${{ needs.version.outputs.version }}_macOS_Silicon.dmg"
-          normalize_macos_artifacts x86_64 \
-            "updater-x86_64/Mora_${{ needs.version.outputs.version }}_macOS_Intel.app.tar.gz" \
-            "dmg-x86_64/Mora_${{ needs.version.outputs.version }}_macOS_Intel.dmg"
-
       - name: Generate release notes
         run: |
           NOTES_FILE="release-notes/${{ needs.version.outputs.tag }}.md"
@@ -172,12 +168,6 @@ jobs:
           ARM_TARBALL=$(basename "$ARM_UPDATER_FILE")
           ARM_DMG=$(basename "$(find_required "dmg-aarch64/*.dmg")")
 
-          INTEL_SIG_FILE=$(find_required "updater-x86_64/*.app.tar.gz.sig")
-          INTEL_UPDATER_FILE="${INTEL_SIG_FILE%.sig}"
-          INTEL_SIG=$(cat "$INTEL_SIG_FILE")
-          INTEL_TARBALL=$(basename "$INTEL_UPDATER_FILE")
-          INTEL_DMG=$(basename "$(find_required "dmg-x86_64/*.dmg")")
-
           LINUX_SIG_FILE=$(find_required "linux-x86_64-bundles/*/*.AppImage.sig" "linux-x86_64-bundles/*/*.AppImage.tar.gz.sig" "linux-x86_64-bundles/*/*.deb.sig" "linux-x86_64-bundles/*.AppImage.sig" "linux-x86_64-bundles/*.AppImage.tar.gz.sig" "linux-x86_64-bundles/*.deb.sig")
           LINUX_UPDATER_FILE="${LINUX_SIG_FILE%.sig}"
           LINUX_SIG=$(cat "$LINUX_SIG_FILE")
@@ -200,11 +190,6 @@ jobs:
                 "signature": "${ARM_SIG}",
                 "url": "https://github.com/${REPO}/releases/download/${TAG}/${ARM_TARBALL}",
                 "dmg_url": "https://github.com/${REPO}/releases/download/${TAG}/${ARM_DMG}"
-              },
-              "darwin-x86_64": {
-                "signature": "${INTEL_SIG}",
-                "url": "https://github.com/${REPO}/releases/download/${TAG}/${INTEL_TARBALL}",
-                "dmg_url": "https://github.com/${REPO}/releases/download/${TAG}/${INTEL_DMG}"
               },
               "linux-x86_64": {
                 "signature": "${LINUX_SIG}",
@@ -233,9 +218,6 @@ jobs:
             dmg-aarch64/*.dmg
             updater-aarch64/*.app.tar.gz
             updater-aarch64/*.app.tar.gz.sig
-            dmg-x86_64/*.dmg
-            updater-x86_64/*.app.tar.gz
-            updater-x86_64/*.app.tar.gz.sig
             linux-x86_64-bundles/*.deb
             linux-x86_64-bundles/*.deb.sig
             linux-x86_64-bundles/*.rpm
