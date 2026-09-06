@@ -5,6 +5,7 @@ const DAY_MS = 24 * 60 * 60 * 1000
 const ALPHA_TAG_PATTERN = /^alpha-v(\d{4})\.(\d{1,2})\.(\d{1,2})-alpha\.(\d+)$/
 const CALENDAR_STABLE_PATTERN = /^v(\d{4})-(\d{2})-(\d{2})$/
 const LEGACY_STABLE_PATTERN = /^stable-v(\d{4})\.(\d{1,2})\.(\d{1,2})$/
+const REVISION_STABLE_PATTERN = /^stable-v(\d{4})\.(\d{1,2})\.(\d{1,2})-r(\d{1,2})$/
 
 function parseDateParts(parts, source) {
   const [year, month, day] = parts.map(Number)
@@ -28,8 +29,25 @@ function parseToday(today) {
 }
 
 function parseStableTag(tag) {
-  const match = CALENDAR_STABLE_PATTERN.exec(tag) ?? LEGACY_STABLE_PATTERN.exec(tag)
+  const match =
+    CALENDAR_STABLE_PATTERN.exec(tag) ??
+    LEGACY_STABLE_PATTERN.exec(tag) ??
+    REVISION_STABLE_PATTERN.exec(tag)
   return match ? parseDateParts(match.slice(1), tag) : null
+}
+
+function parseStableReleaseTag(tag) {
+  const revisionMatch = REVISION_STABLE_PATTERN.exec(tag)
+  if (revisionMatch) {
+    const revision = Number(revisionMatch[4])
+    if (!Number.isInteger(revision) || revision < 1 || revision > 99) {
+      throw new Error(`Stable release revision must be between 1 and 99, got ${tag}`)
+    }
+    return { date: parseDateParts(revisionMatch.slice(1, 4), tag), revision }
+  }
+
+  const date = parseStableTag(tag)
+  return date ? { date, revision: 0 } : null
 }
 
 function parseAlphaTag(tag) {
@@ -101,13 +119,22 @@ export function computeAlphaRelease({ alphaTags, stableTags, tagsAtHead, today }
 
 export function computeStableRelease({ tag, today }) {
   const todayDate = parseToday(today)
-  const tagDate = parseStableTag(tag)
-  if (!tagDate) throw new Error(`Stable tags must use vYYYY-MM-DD or stable-vYYYY.M.D, got ${tag}`)
-  if (tagDate > todayDate) {
+  const releaseTag = parseStableReleaseTag(tag)
+  if (!releaseTag) {
+    throw new Error(`Stable tags must use vYYYY-MM-DD, stable-vYYYY.M.D, or stable-vYYYY.M.D-rN, got ${tag}`)
+  }
+  if (releaseTag.date > todayDate) {
     throw new Error(`Stable tag ${tag} cannot be later than the current UTC date ${today}`)
   }
-  const version = calendarCore(tagDate)
-  return { channel: 'stable', displayVersion: tag.startsWith('v') ? tag : version, tag, version }
+  // Reserve two patch digits for same-day immutable release revisions. This
+  // keeps version ordering monotonic for N→N+1 OTA dogfood while a normal
+  // next-day release remains higher than every revision from today.
+  const patch = releaseTag.date.getUTCDate() * 100 + releaseTag.revision
+  const version = `${releaseTag.date.getUTCFullYear()}.${releaseTag.date.getUTCMonth() + 1}.${patch}`
+  const displayVersion = tag.startsWith('v')
+    ? tag
+    : `${calendarCore(releaseTag.date)}${releaseTag.revision ? ` r${releaseTag.revision}` : ''}`
+  return { channel: 'stable', displayVersion, tag, version }
 }
 
 function gitLines(args) {

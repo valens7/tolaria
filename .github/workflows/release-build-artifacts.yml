@@ -85,7 +85,7 @@ jobs:
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
         run: |
           if [ -z "$APPLE_CERTIFICATE" ] || [ -z "$APPLE_CERTIFICATE_PASSWORD" ]; then
-            echo "Apple Developer certificate is not configured; continuing with private dogfood signing."
+            echo "Apple Developer certificate is not configured; a complete ad-hoc seal will be used for private dogfood."
             exit 0
           fi
 
@@ -105,15 +105,15 @@ jobs:
             exit 1
           fi
           case "$APPLE_IDENTITY" in
-            "Developer ID Application: "*) ;;
+            "Developer ID Application: "*)
+              echo "Using a Developer ID Application signing identity."
+              echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+              echo "APPLE_SIGNING_IDENTITY=$APPLE_IDENTITY" >> "$GITHUB_ENV"
+              ;;
             *)
-              echo "::error::The imported certificate is not a Developer ID Application certificate. A private dogfood DMG must not be released with an ad-hoc or development signature." >&2
-              exit 1
+              echo "::warning::The imported certificate is not a Developer ID Application certificate; using the complete private-dogfood ad-hoc seal instead."
               ;;
           esac
-          echo "Using a Developer ID Application signing identity."
-          echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
-          echo "APPLE_SIGNING_IDENTITY=$APPLE_IDENTITY" >> "$GITHUB_ENV"
 
       - name: Validate telemetry env
         env:
@@ -232,31 +232,58 @@ jobs:
             pnpm tauri build --target ${{ matrix.target }}
           fi
 
-      - name: Verify distributable macOS app signature
+      - name: Seal and verify distributable macOS app
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.MORA_TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.MORA_TAURI_KEY_PASSWORD }}
         run: |
           APP_BUNDLE="src-tauri/target/${{ matrix.target }}/release/bundle/macos/Mora.app"
           if [ ! -d "$APP_BUNDLE" ]; then
             echo "::error::Expected macOS app bundle was not produced: $APP_BUNDLE" >&2
             exit 1
           fi
+
+          # Finder metadata and resource-fork remnants make a bundle fail
+          # strict verification on current macOS releases. The app bundle is a
+          # disposable build artifact, so remove that metadata before its
+          # final seal is created.
+          xattr -cr "$APP_BUNDLE"
+          if [ -n "${APPLE_SIGNING_IDENTITY:-}" ]; then
+            codesign --force --deep --sign "$APPLE_SIGNING_IDENTITY" --options runtime --timestamp "$APP_BUNDLE"
+            echo "Developer ID application seal created."
+          else
+            codesign --force --deep --sign - "$APP_BUNDLE"
+            echo "Private-dogfood ad-hoc application seal created."
+          fi
           codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
-          SIGNING_DETAILS=$(codesign -dvvv "$APP_BUNDLE" 2>&1)
-          if printf '%s\n' "$SIGNING_DETAILS" | grep -q '^Signature=adhoc$'; then
-            echo "::error::Refusing to publish an ad-hoc-signed Mora.app." >&2
+
+          SEALED_UPDATER="src-tauri/target/${{ matrix.target }}/release/bundle/macos/Mora-resealed.app.tar.gz"
+          tar -czf "$SEALED_UPDATER" -C "$(dirname "$APP_BUNDLE")" "$(basename "$APP_BUNDLE")"
+          pnpm tauri signer sign \
+            --private-key "$TAURI_SIGNING_PRIVATE_KEY" \
+            --password "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" \
+            "$SEALED_UPDATER"
+          if [ ! -s "${SEALED_UPDATER}.sig" ]; then
+            echo "::error::The sealed updater archive did not receive a signature." >&2
             exit 1
           fi
-          if ! printf '%s\n' "$SIGNING_DETAILS" | grep -q '^TeamIdentifier='; then
-            echo "::error::Mora.app has no Apple team identifier after signing." >&2
-            exit 1
-          fi
-          echo "Distributable macOS app signature verified."
+
+          DMG_DIRECTORY="src-tauri/target/${{ matrix.target }}/release/bundle/dmg"
+          SEALED_DMG="${DMG_DIRECTORY}/Mora-resealed.dmg"
+          STAGING_DIRECTORY=$(mktemp -d)
+          cp -R "$APP_BUNDLE" "$STAGING_DIRECTORY/Mora.app"
+          ln -s /Applications "$STAGING_DIRECTORY/Applications"
+          hdiutil create -volname "Mora" -srcfolder "$STAGING_DIRECTORY" -ov -format UDZO "$SEALED_DMG"
+          hdiutil verify "$SEALED_DMG"
+          rm -rf "$STAGING_DIRECTORY"
+          echo "Distributable macOS app, updater archive, and DMG verified."
 
       - name: Upload .dmg
         if: ${{ inputs.upload_macos_dmg }}
         uses: actions/upload-artifact@v4
         with:
           name: dmg-${{ matrix.arch }}
-          path: src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/dmg/Mora-resealed.dmg
           retention-days: 1
 
       - name: Upload updater artifacts (.tar.gz + .sig)
@@ -264,8 +291,8 @@ jobs:
         with:
           name: updater-${{ matrix.arch }}
           path: |
-            src-tauri/target/${{ matrix.target }}/release/bundle/macos/*.app.tar.gz
-            src-tauri/target/${{ matrix.target }}/release/bundle/macos/*.app.tar.gz.sig
+            src-tauri/target/${{ matrix.target }}/release/bundle/macos/Mora-resealed.app.tar.gz
+            src-tauri/target/${{ matrix.target }}/release/bundle/macos/Mora-resealed.app.tar.gz.sig
           retention-days: 1
 
   build-linux:

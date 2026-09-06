@@ -35,6 +35,27 @@ describe('release version computation', () => {
     )
   })
 
+  it('creates monotonic same-day stable revisions for OTA dogfood', () => {
+    assert.deepEqual(
+      computeStableRelease({ tag: 'stable-v2026.8.2-r1', today }),
+      {
+        channel: 'stable',
+        displayVersion: '2026.8.2 r1',
+        tag: 'stable-v2026.8.2-r1',
+        version: '2026.8.201',
+      },
+    )
+    assert.deepEqual(
+      computeStableRelease({ tag: 'stable-v2026.8.2-r2', today }),
+      {
+        channel: 'stable',
+        displayVersion: '2026.8.2 r2',
+        tag: 'stable-v2026.8.2-r2',
+        version: '2026.8.202',
+      },
+    )
+  })
+
   it('preserves the next-day alpha safeguard after a same-day stable release', () => {
     assert.deepEqual(
       computeAlphaRelease({
