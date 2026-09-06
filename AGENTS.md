@@ -2,6 +2,21 @@
 
 ## 1. Development Process
 
+### Local development-root Start Gate
+
+Mora's approved active local repository is **`/Users/valens/Developer/Mora`**.
+
+Before writing source, installing dependencies, running builds, or performing Git
+operations, verify that the repository root is this path. A path under Google
+Drive, AOV Drive, Baidu Netdisk, Synology Drive, iCloud Drive, Dropbox,
+OneDrive, or any other synchronised folder is a **Start Gate Fail**: do not
+develop there. Google Drive holds references, prototypes, documents, and
+release evidence only; GitHub `main` remains the code authority.
+
+For another application, create its active repository directly under
+`/Users/valens/Developer/<AppName>`. Do not use an old Drive mirror or a
+temporary validation clone as a development workspace.
+
 ### Mandatory-rule exception protocol
 
 Use an exception only when a required service or analyzer remains unavailable after one retry, or when satisfying the rule is technically impossible without increasing security or data-loss risk. The repository owner is the sole approver. Before proceeding, record the blocked command, evidence, affected files, risk, compensating check, approver, and an expiry of at most 72 hours in the Todoist task or final handoff; review and remove the exception within seven days. A preference, deadline, or failing quality gate is not sufficient exception criteria.
