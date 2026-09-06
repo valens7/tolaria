@@ -77,7 +77,7 @@ The Drive root is `/Users/valens/Documents/AOV Drive/20 AOV PMO/20 墨澜 Mora/4
 
 ### Completed Drive artifact cleanup
 
-After the independent rebuild passed, the following verified C paths were removed from the Drive root: root `node_modules/`, `.pnpm-store/`, `dist/`, `.tooling/node-v22.23.2-darwin-arm64/`, `src-tauri/target/`; and the corresponding `node_modules/`, `.pnpm-store/`, `dist/`, `test-results/`, and `src-tauri/target/` paths within `tolaria-mora-clean`. The incomplete clone was then separately inspected: it contained no source, commits, refs, local configuration, or assets—only incomplete Git metadata and a Finder icon—and was removed. Historical `tolaria-fork` snapshots, prototypes, and release evidence were not deleted.
+After the independent rebuild passed, the following verified C paths were removed from the Drive root: root `node_modules/`, `.pnpm-store/`, `dist/`, `.tooling/node-v22.23.2-darwin-arm64/`, `src-tauri/target/`; and the corresponding `node_modules/`, `.pnpm-store/`, `dist/`, `test-results/`, and `src-tauri/target/` paths within `tolaria-mora-clean`. The incomplete clone was then separately inspected: it contained no source, commits, refs, local configuration, or assets—only incomplete Git metadata and a Finder icon—and was removed. The preserved `tolaria-fork` snapshots also had only their verified `node_modules/`, `dist/`, `test-results/`, and `src-tauri/target/` subdirectories removed; their source and reference contents remain intact. Prototypes and release evidence were not deleted.
 
 ## Clean-clone rebuild procedure
 
