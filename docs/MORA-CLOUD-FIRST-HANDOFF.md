@@ -46,9 +46,20 @@ The approved CodeScene/Codacy exception is limited to Shell/Brand and Memos V1 a
 
 Compensating gates for this handoff: locale validation, TypeScript typecheck, normal project ESLint, focused/full unit tests, real-disk Playwright, production build, Rust tests, and attempted local security checks. CodeScene is unavailable; Codacy’s PMD runtime and Trivy database are environment/network constrained. The checked-in Codacy ESLint configuration also references unavailable plugins, while Biome reports legacy violations outside the handoff’s changed lines; neither is represented as a passing security scan. Record a later full Codacy/Trivy run against the handoff SHA rather than silently treating this exception as permanent.
 
+### Independent clean-clone evidence
+
+The non-sync clone `/Users/valens/Documents/Codex/mora-clean-ef7db0d` was cloned from GitHub, fast-forwarded to source SHA `9844bf1a4acc0aa04d35acfd1fd927f44b68f9d3`, and rebuilt without reading the Drive workspace:
+
+- `pnpm@10.24.0 install --frozen-lockfile` completed from the committed lockfile.
+- `pnpm test`: 522 files / 5,326 tests passed; release-version tests: 6 / 6 passed.
+- `pnpm build`: passed.
+- `cargo test --manifest-path src-tauri/Cargo.toml`: 1,152 / 1,152 tests passed on the final retry.
+
+The first full Rust attempt had one timeout in its self-spawned Codex stdin probe; its focused retry and the next complete Rust run both passed. This is retained as a transient automated-test-environment observation, not represented as a Mora product or Vault failure.
+
 ## Drive workspace classification
 
-The Drive root is `/Users/valens/Documents/AOV Drive/20 AOV PMO/20 墨澜 Mora/40 Mora Application`. No Drive content is deleted by this document. The classification exists so cleanup can happen only after the Git handoff and clean-clone validation.
+The Drive root is `/Users/valens/Documents/AOV Drive/20 AOV PMO/20 墨澜 Mora/40 Mora Application`. No Drive content was deleted until the Git handoff and clean-clone validation passed. The classification separates source/reference assets from regenerable artifacts.
 
 | Classification | Paths / contents | Action |
 | --- | --- | --- |
@@ -60,9 +71,13 @@ The Drive root is `/Users/valens/Documents/AOV Drive/20 AOV PMO/20 墨澜 Mora/4
 
 ### Existing clone disposition
 
-- `tolaria-mora-clean` is the currently reconciled working clone. It contains generated-heavy C paths and should not remain the active development workspace after the clean-clone check.
-- `tolaria-fork` and `tolaria-fork.backup-20260906-release-continuity` had no commits but contained unique Toggle P0 source and ADRs. That source is reconciled by this handoff. Keep them untouched as historical snapshots until the final Git/clean-clone validation below completes; then they are candidates to archive, not automatic deletion.
-- `tolaria-mora-clean.clone-incomplete-20260906` had no source commit and only Finder metadata after comparison. It is a C candidate once the handoff clone has passed.
+- `tolaria-mora-clean` is the currently reconciled Drive mirror. Its generated C paths were removed; it must not become the future active development workspace.
+- `tolaria-fork` and `tolaria-fork.backup-20260906-release-continuity` had no commits but contained unique Toggle P0 source and ADRs. That source is reconciled by this handoff. They are preserved historical snapshots and are candidates to archive, not automatic deletion.
+- `tolaria-mora-clean.clone-incomplete-20260906` had no source commit and only Finder/incomplete Git metadata after comparison. It was removed as a verified C artifact after the handoff clone passed.
+
+### Completed Drive artifact cleanup
+
+After the independent rebuild passed, the following verified C paths were removed from the Drive root: root `node_modules/`, `.pnpm-store/`, `dist/`, `.tooling/node-v22.23.2-darwin-arm64/`, `src-tauri/target/`; and the corresponding `node_modules/`, `.pnpm-store/`, `dist/`, `test-results/`, and `src-tauri/target/` paths within `tolaria-mora-clean`. The incomplete clone was then separately inspected: it contained no source, commits, refs, local configuration, or assets—only incomplete Git metadata and a Finder icon—and was removed. Historical `tolaria-fork` snapshots, prototypes, and release evidence were not deleted.
 
 ## Clean-clone rebuild procedure
 
