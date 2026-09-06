@@ -22,6 +22,7 @@
 - Existing Memo editing returns to the same Memos context. No editor, storage layer, database, Vault, or identity contract was recreated.
 - The existing, uncommitted Mora Toggle P0 from the historical worktree is reconciled into Git: `/Toggle`, editable title/body, collapse state, Markdown `> [!mora-toggle]+/-`, save/reload, and English/Simplified Chinese labels.
 - Existing English Learning source-first work is retained in Git but deliberately not extended.
+- Legacy Note Window coverage now reflects the approved Mora Home default: the window still resolves its selected Vault and preserves the main-window last-note state, while its surface remains Mora Home. No Vault, Markdown, editor, or identity behavior changed in this contract reconciliation.
 
 ### Deliberately deferred
 
@@ -48,11 +49,11 @@ Compensating gates for this handoff: locale validation, TypeScript typecheck, no
 
 ### Independent clean-clone evidence
 
-The non-sync clone `/Users/valens/Documents/Codex/mora-clean-ef7db0d` was cloned from GitHub, fast-forwarded to source SHA `9844bf1a4acc0aa04d35acfd1fd927f44b68f9d3`, and rebuilt without reading the Drive workspace:
+The non-sync clone `/Users/valens/Documents/Codex/mora-clean-ef7db0d` was cloned from GitHub and rebuilt without reading the Drive workspace. Its final source-contract commit before this handoff record is `3b45023` (`test: align note window contracts with Mora Home`):
 
 - `pnpm@10.24.0 install --frozen-lockfile` completed from the committed lockfile.
 - `pnpm test`: 522 files / 5,326 tests passed; release-version tests: 6 / 6 passed.
-- `pnpm build`: passed.
+- `pnpm build`, `pnpm lint --quiet`, and `pnpm l10n:validate` passed; locale validation covers two catalogues against 1,103 English keys.
 - `cargo test --manifest-path src-tauri/Cargo.toml`: 1,152 / 1,152 tests passed on the final retry.
 
 The first full Rust attempt had one timeout in its self-spawned Codex stdin probe; its focused retry and the next complete Rust run both passed. This is retained as a transient automated-test-environment observation, not represented as a Mora product or Vault failure.
