@@ -101,7 +101,13 @@ jobs:
           security import "$CERT_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
           security list-keychain -d user -s "$KEYCHAIN_PATH"
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          APPLE_IDENTITY=$(security find-identity -v -p codesigning "$KEYCHAIN_PATH" | sed -n 's/.*\"\(.*\)\".*/\1/p' | head -n 1)
+          if [ -z "$APPLE_IDENTITY" ]; then
+            echo "::error::No codesigning identity was found in the imported keychain certificate." >&2
+            exit 1
+          fi
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+          echo "APPLE_SIGNING_IDENTITY=$APPLE_IDENTITY" >> "$GITHUB_ENV"
 
       - name: Validate telemetry env
         env:
@@ -204,7 +210,6 @@ jobs:
           # The certificate is imported into the ephemeral keychain above. Do not
           # pass the P12 payload to Tauri again: Tauri would import it a second
           # time and can reject an otherwise valid keychain certificate.
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
