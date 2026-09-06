@@ -32,10 +32,31 @@ export function collectionFromSelection(
     return builtinCollection(selection)
   }
 
+  if (selection.kind === 'moraHome' || selection.kind === 'moraMemosHome') {
+    return {
+      id: selection.kind,
+      label: selection.kind === 'moraHome' ? 'Mora Home' : 'Memos',
+      origin: 'builtin',
+      selection,
+      presentation: defaultListPresentation(),
+    }
+  }
+
   if (selection.kind === 'moraMemoTimeline') {
     return {
       id: 'mora-memo-timeline',
       label: 'Memo Timeline',
+      origin: 'builtin',
+      selection,
+      presentation: defaultListPresentation(),
+    }
+  }
+
+  if (selection.kind === 'moraLearningFeed' || selection.kind === 'moraContinueReview') {
+    const continuing = selection.kind === 'moraContinueReview'
+    return {
+      id: continuing ? 'mora-continue-review' : 'mora-learning-feed',
+      label: continuing ? 'Continue Review' : 'Learning Feed',
       origin: 'builtin',
       selection,
       presentation: defaultListPresentation(),

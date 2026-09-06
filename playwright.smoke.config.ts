@@ -26,6 +26,7 @@ export default defineConfig({
   use: {
     baseURL,
     headless: true,
+    ...(process.env.PLAYWRIGHT_EXECUTABLE_PATH ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH } } : {}),
     storageState: claudeCodeOnboardingStorageState,
   },
   projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],

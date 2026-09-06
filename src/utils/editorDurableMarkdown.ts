@@ -18,6 +18,11 @@ import {
   isCalloutBlock,
   serializeCalloutBlock,
 } from './calloutMarkdown'
+import {
+  hasMoraToggleBlocks,
+  isMoraToggleBlock,
+  serializeMoraToggleBlock,
+} from './moraToggleMarkdown'
 import { htmlBlockMarkdownCodec } from './htmlBlockMarkdown'
 import { mermaidMarkdownCodec } from './mermaidMarkdown'
 import { tldrawMarkdownCodec } from './tldrawMarkdown'
@@ -57,7 +62,16 @@ function serializeCalloutAndMathAwareBlocks(editor: MarkdownSerializer, blocks: 
   }
 
   for (const block of blocks) {
-    if (isCalloutBlock(block as Parameters<typeof isCalloutBlock>[0])) {
+    if (isMoraToggleBlock(block as Parameters<typeof isMoraToggleBlock>[0])) {
+      flushPending()
+      const [restoredToggle] = restoreMathInBlocks(
+        restoreMarkdownHighlightsInBlocks([block]),
+      )
+      chunks.push(serializeMoraToggleBlock(
+        editor,
+        restoredToggle as Parameters<typeof serializeMoraToggleBlock>[1],
+      ))
+    } else if (isCalloutBlock(block as Parameters<typeof isCalloutBlock>[0])) {
       flushPending()
       const [restoredCallout] = restoreMathInBlocks(
         restoreMarkdownHighlightsInBlocks([block]),
@@ -94,7 +108,7 @@ export function serializeDurableEditorBlocks(
 }
 
 export function hasDurableEditorBlocks(blocks: unknown[]): boolean {
-  return hasCalloutBlocks(blocks) || hasFileAttachmentBlocks(blocks) || hasDurableMarkdownBlocks({
+  return hasMoraToggleBlocks(blocks) || hasCalloutBlocks(blocks) || hasFileAttachmentBlocks(blocks) || hasDurableMarkdownBlocks({
     blocks,
     codecs: EDITOR_DURABLE_MARKDOWN_CODECS,
   })

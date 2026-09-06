@@ -533,10 +533,13 @@ async function installFixtureVaultInitScript({ page, vaultPath, isGitRepo, folde
 async function waitForFixtureVaultReady({ page, expectedTitle }: FixturePageArgs & { expectedTitle: string }): Promise<void> {
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await page.waitForFunction(() => Boolean(window.__mockHandlers?.list_vault))
-  await page.locator('[data-testid="note-list-container"]').waitFor({ timeout: FIXTURE_VAULT_READY_TIMEOUT })
-  await expect(page.getByText(expectedTitle, { exact: true }).first()).toBeVisible({
-    timeout: FIXTURE_VAULT_READY_TIMEOUT,
-  })
+  await page.locator('[data-testid="mora-home"], [data-testid="note-list-container"]').first().waitFor({ timeout: FIXTURE_VAULT_READY_TIMEOUT })
+  const noteList = page.locator('[data-testid="note-list-container"]')
+  if (await noteList.count() > 0) {
+    await expect(page.getByText(expectedTitle, { exact: true }).first()).toBeVisible({
+      timeout: FIXTURE_VAULT_READY_TIMEOUT,
+    })
+  }
 }
 
 export async function openFixtureVault(

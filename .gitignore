@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.pnpm-store/
 dist
 dist-ssr
 site/.vitepress/cache/
@@ -20,6 +21,7 @@ _site/
 !.vscode/extensions.json
 .idea
 .DS_Store
+Icon?
 *.suo
 *.ntvs*
 *.njsproj

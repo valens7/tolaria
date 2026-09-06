@@ -42,7 +42,7 @@ type MenuDropdownProps = PropsWithChildren<{
 }>
 
 type RenderSideMenuOptions = {
-  locale?: 'en' | 'it-IT'
+  locale?: 'en' | 'zh-CN'
 }
 
 type TestRect = {
@@ -715,11 +715,11 @@ describe('TolariaSideMenu', () => {
     appendBlockOuters([heading])
     mockEditor.getBlock.mockReturnValue(heading)
 
-    renderSideMenuAndCollapseControllerWithBlock(heading, { locale: 'it-IT' })
+    renderSideMenuAndCollapseControllerWithBlock(heading, { locale: 'zh-CN' })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Comprimi sezione' }))
+    fireEvent.click(screen.getByRole('button', { name: '收起部分' }))
 
-    expect(screen.getByRole('button', { name: 'Espandi sezione' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '展开部分' })).toBeInTheDocument()
   })
 
   it('only renders the list item collapse toggle when a list item has children', () => {
@@ -757,11 +757,11 @@ describe('TolariaSideMenu', () => {
       [parentListItem, childListItem].find((block) => block.id === id)
     ))
 
-    renderSideMenuAndCollapseControllerWithBlock(parentListItem, { locale: 'it-IT' })
+    renderSideMenuAndCollapseControllerWithBlock(parentListItem, { locale: 'zh-CN' })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Comprimi elemento' }))
+    fireEvent.click(screen.getByRole('button', { name: '收起项目' }))
 
-    expect(screen.getByRole('button', { name: 'Espandi elemento' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '展开项目' })).toBeInTheDocument()
   })
 
   it('does not subscribe collapsed-heading rendering until something is collapsed', () => {

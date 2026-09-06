@@ -1,5 +1,6 @@
 import { compactMarkdown } from './compact-markdown'
 import { injectCalloutBlocks } from './calloutMarkdown'
+import { injectMoraToggleBlocks } from './moraToggleMarkdown'
 import {
   hasDurableEditorBlocks,
   injectDurableEditorMarkdownBlocks,
@@ -116,7 +117,8 @@ export function injectRichEditorMarkdownBlocks(blocks: EditorBlocksSnapshot): Ed
   const withMath = injectMathInBlocks(withWikilinks)
   const withHighlights = injectMarkdownHighlightsInBlocks(withMath)
   const withDurableBlocks = injectDurableEditorMarkdownBlocks(withHighlights)
-  const withCallouts = injectCalloutBlocks(withDurableBlocks)
+  const withMoraToggles = injectMoraToggleBlocks(withDurableBlocks)
+  const withCallouts = injectCalloutBlocks(withMoraToggles)
   return injectBlankParagraphBlocks(withCallouts)
 }
 

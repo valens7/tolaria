@@ -143,7 +143,7 @@ proposed → active → superseded
 | [0084](0084-app-localization-foundation.md) | App-owned localization foundation | superseded → [0087](0087-json-catalogs-and-lara-cli-localization.md) |
 | [0085](0085-non-git-vault-support.md) | Non-git vaults open with explicit later Git initialization | active |
 | [0086](0086-in-app-image-file-preview.md) | In-app image previews for binary vault files | superseded → [0098](0098-in-app-image-and-pdf-file-previews.md) |
-| [0087](0087-json-catalogs-and-lara-cli-localization.md) | JSON locale catalogs with Lara CLI synchronization | active |
+| [0087](0087-json-catalogs-and-lara-cli-localization.md) | JSON locale catalogs with Lara CLI synchronization | superseded → [0177](0177-mora-bilingual-english-simplified-chinese.md) |
 | [0088](0088-markdown-durable-mermaid-diagrams.md) | Markdown-durable Mermaid diagrams in notes | active |
 | [0089](0089-active-vault-filesystem-watcher.md) | Active vault filesystem watcher | superseded -> [0165](0165-window-owned-vault-watchers-and-main-window-git-background-work.md) |
 | [0090](0090-pi-cli-agent-adapter.md) | Pi CLI agent adapter | active |
@@ -223,12 +223,14 @@ proposed → active → superseded
 | [0163](0163-agent-owned-model-selection.md) | Agent-owned model discovery and selection | active |
 | [0165](0165-window-owned-vault-watchers-and-main-window-git-background-work.md) | Window-owned vault watchers and main-window Git background work | active |
 | [0166](0166-snapshot-first-progressive-vault-startup.md) | Snapshot-first progressive vault startup | active |
-| [0167](0167-non-collapsible-callout-scope.md) | Non-collapsible callout scope | active |
+| [0167](0167-non-collapsible-callout-scope.md) | Non-collapsible callout scope | superseded → [0178](0178-mora-toggle-markdown-blocks.md) |
 | [0168](0168-sandboxed-standalone-html-file-previews.md) | Sandboxed standalone HTML file previews | active |
 | [0170](0170-measurable-crash-safe-startup.md) | Measurable, crash-safe startup | active |
 | [0171](0171-separate-vault-application-instances.md) | Separate vault application instances | active |
 | [0172](0172-local-codescene-change-safeguards.md) | Local CodeScene safeguards before commits and direct-to-main pushes | active |
 | [0175](0175-mcp-vault-lifecycle-uses-app-registry.md) | MCP vault lifecycle uses the app registry | active |
 | [0176](0176-bundled-font-assets-for-offline-startup.md) | Bundled font assets for offline startup | active |
+| [0177](0177-mora-bilingual-english-simplified-chinese.md) | Mora bilingual UI: English and Simplified Chinese | active |
+| [0178](0178-mora-toggle-markdown-blocks.md) | Mora Toggle Block Markdown syntax | active |
 | [0179](0179-mora-owned-release-identity-and-vault-continuity.md) | Mora-owned release identity and vault continuity | active |
 | [0173](0173-future-calendar-version-recovery.md) | Future calendar version rejection and recovery | active |

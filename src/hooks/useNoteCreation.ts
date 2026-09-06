@@ -25,6 +25,7 @@ import {
 import type { VaultOption } from '../components/status-bar/types'
 import { useCreateNoteInFolderRequests } from './noteCreationRequests'
 import { requestEditorFocus } from './useEditorFocus'
+import { buildMoraMemoContent, createMoraMemoId } from '../mora/moraMemos'
 import {
   resolveWikilinkCreationRequest,
   type WikilinkCreationDestination,
@@ -794,12 +795,14 @@ type ImmediateCreationPath =
   | 'folder_command_palette'
   | 'folder_context_menu'
   | 'folder_header'
+  | 'mora_memo_capture'
   | 'type_section'
 
 export interface ImmediateCreateOptions {
   creationPath?: ImmediateCreationPath
   format?: NoteFormat
   folderPath?: string
+  initialContent?: string
   vaultPath?: string
 }
 
@@ -870,7 +873,8 @@ function immediateNoteRelativePath(slug: string, folderPath?: string): string {
 }
 
 async function createNoteImmediate(deps: ImmediateCreateDeps, request: ImmediateCreateRequest): Promise<boolean> {
-  const noteType = request.type || 'Note'
+  const isMemoCapture = request.creationPath === 'mora_memo_capture'
+  const noteType = request.type || (isMemoCapture ? 'Memo' : 'Note')
   const noteFormat = normalizeNoteFormat(request.format)
   const untitledLabel = noteFormat === NOTE_FORMAT_SHEET ? 'Sheet' : noteType
   const slug = generateUntitledFilename(deps.entries, untitledLabel, deps.pendingSlugs)
@@ -884,6 +888,7 @@ async function createNoteImmediate(deps: ImmediateCreateDeps, request: Immediate
   const status = null
   const creationVaultPath = resolveImmediateCreationVaultPath(deps, request)
   const relativePath = immediateNoteRelativePath(slug, request.folderPath)
+  const memoId = isMemoCapture ? createMoraMemoId() : null
   const entry = {
     ...buildNewEntry({
       path: joinVaultPath(creationVaultPath, relativePath),
@@ -892,19 +897,26 @@ async function createNoteImmediate(deps: ImmediateCreateDeps, request: Immediate
       type: noteType,
       status,
     }),
+    // The optimistic entry is the same canonical file that was just written.
+    // Giving it the captured snippet avoids waiting for a watcher reload before
+    // it appears intelligibly in the Memos timeline.
+    snippet: memoId ? (request.initialContent ?? '').trim() : '',
+    properties: memoId ? { memo_id: memoId } : {},
     workspace: workspaceForVaultPath(creationVaultPath, deps.vaults, deps.defaultWorkspacePath),
   }
   const resolved = applyTypeDefaults({
     entry,
-    content: buildNoteContent({
-      title: null,
-      type: noteType,
-      status,
-      format: noteFormat,
-      template,
-      initialEmptyHeading: noteFormat !== NOTE_FORMAT_SHEET,
-      defaults,
-    }),
+    content: memoId
+      ? buildMoraMemoContent(memoId, request.initialContent ?? '')
+      : buildNoteContent({
+        title: null,
+        type: noteType,
+        status,
+        format: noteFormat,
+        template,
+        initialEmptyHeading: noteFormat !== NOTE_FORMAT_SHEET,
+        defaults,
+      }),
     defaults,
   })
   const didPersist = await persistImmediateEntry(deps, resolved.entry, resolved.content)

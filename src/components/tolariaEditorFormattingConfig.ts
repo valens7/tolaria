@@ -7,6 +7,7 @@ import { createElement, type ReactElement } from 'react'
 import {
   CalendarBlank,
   CalendarDots,
+  CaretRight,
   CodeBlock,
   Clock,
   File,
@@ -35,6 +36,7 @@ import {
 } from '@phosphor-icons/react'
 import { trackEvent } from '../lib/telemetry'
 import { CALLOUT_BLOCK_TYPE, calloutHeading } from '../utils/calloutMarkdown'
+import { MORA_TOGGLE_BLOCK_TYPE } from '../utils/moraToggleMarkdown'
 import {
   OBSIDIAN_CALLOUT_DEFINITIONS,
   type ObsidianCalloutType,
@@ -78,6 +80,7 @@ type TolariaSlashMenuLabels = {
   htmlTitle: string
   mathTitle: string
   timeTitle: string
+  toggleTitle: string
 }
 type DateTimeSlashCommandKind = 'date' | 'datetime' | 'time'
 type DateTimeSlashMenuLabels = Pick<
@@ -149,6 +152,7 @@ const TOLARIA_SLASH_MENU_ICONS: Partial<Record<string, PhosphorIcon>> = {
   quote: Quotes,
   table: Table,
   time: Clock,
+  mora_toggle: CaretRight,
   toggle_heading: TextHOne,
   toggle_heading_2: TextHTwo,
   toggle_heading_3: TextHThree,
@@ -330,6 +334,22 @@ export function createCalloutSlashMenuItem(
   } as TolariaSlashMenuItem
 }
 
+export function createMoraToggleSlashMenuItem(
+  editor: Parameters<typeof getDefaultReactSlashMenuItems>[0],
+  labels: Pick<TolariaSlashMenuLabels, 'toggleTitle'> = { toggleTitle: 'Toggle' },
+): TolariaSlashMenuItem {
+  return createBlockSlashMenuItem(editor, {
+    aliases: ['collapse', 'details', 'disclosure'],
+    eventName: 'editor_mora_toggle_slash_command_used',
+    key: 'mora_toggle',
+    props: {
+      collapsed: false,
+    },
+    title: labels.toggleTitle,
+    type: MORA_TOGGLE_BLOCK_TYPE,
+  })
+}
+
 function createBlockSlashMenuItem(
   editor: Parameters<typeof getDefaultReactSlashMenuItems>[0],
   config: BlockSlashMenuItemConfig,
@@ -430,7 +450,11 @@ export function getTolariaSlashMenuItems(
     ...createCalloutSlashMenuItem(editor, labels),
     group: defaultItems.at(quoteIndex)?.group,
   }
-  defaultItems.splice(quoteIndex === -1 ? 0 : quoteIndex + 1, 0, calloutItem)
+  const moraToggleItem = {
+    ...createMoraToggleSlashMenuItem(editor, labels),
+    group: defaultItems.at(quoteIndex)?.group,
+  }
+  defaultItems.splice(quoteIndex === -1 ? 0 : quoteIndex + 1, 0, calloutItem, moraToggleItem)
   const dateTimeItems = createDateTimeSlashMenuItems(editor, labels).map((item) => ({
     ...item,
     group: otherGroup,

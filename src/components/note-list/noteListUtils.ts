@@ -36,8 +36,12 @@ export function resolveHeaderTitle(selection: SidebarSelection, typeDocument: Va
     const view = views?.find((v) => v.filename === selection.filename)
     return view?.definition.name ?? translate(locale, 'noteList.title.view')
   }
+  if (selection.kind === 'moraHome') return translate(locale, 'sidebar.nav.home')
+  if (selection.kind === 'moraMemosHome') return translate(locale, 'sidebar.nav.memos')
   if (selection.kind === 'entity') return selection.entry.title
   if (selection.kind === 'moraMemoTimeline') return translate(locale, 'sidebar.nav.memoTimeline')
+  if (selection.kind === 'moraLearningFeed') return translate(locale, 'sidebar.nav.learningFeed')
+  if (selection.kind === 'moraContinueReview') return translate(locale, 'sidebar.nav.continueReview')
   return resolveNonEntityHeaderTitle(selection, typeDocument, locale)
 }
 

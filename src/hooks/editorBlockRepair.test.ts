@@ -59,6 +59,13 @@ describe('repairMalformedEditorBlocks', () => {
     expect(repairMalformedEditorBlocks([parent])).toEqual([parent])
   })
 
+  it('keeps nested Mora Toggle children under their parent block', () => {
+    const nested = block('paragraph', 'Toggle detail')
+    const parent = block('moraToggle', 'Toggle summary', [nested])
+
+    expect(repairMalformedEditorBlocks([parent])).toEqual([parent])
+  })
+
   it('assigns fresh ids to duplicate blocks before render recovery retries', () => {
     const first = { ...block('paragraph', 'Intro'), id: 'duplicate-id' }
     const second = { ...block('mermaidBlock', 'Diagram'), id: 'duplicate-id' }

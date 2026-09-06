@@ -1072,6 +1072,7 @@ function useSuggestionMenuItems(options: {
           htmlTitle: t('editor.slash.htmlBlock'),
           mathTitle: t('editor.slash.math'),
           timeTitle: t('editor.slash.time'),
+          toggleTitle: t('editor.slash.toggle'),
             }),
           ),
         runEditorAction,

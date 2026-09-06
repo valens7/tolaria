@@ -1,9 +1,12 @@
+import { MORA_TOGGLE_BLOCK_TYPE } from '../utils/moraToggleMarkdown'
+
 let fallbackBlockIdSequence = 0
-const NESTABLE_LIST_ITEM_TYPES = new Set([
+const NESTABLE_BLOCK_TYPES = new Set([
   'bulletListItem',
   'numberedListItem',
   'checkListItem',
   'toggleListItem',
+  MORA_TOGGLE_BLOCK_TYPE,
 ])
 
 type RepairResult = {
@@ -44,7 +47,7 @@ function isEditorBlockRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function canNestChildBlocks(block: Record<string, unknown>): boolean {
-  return typeof block.type === 'string' && NESTABLE_LIST_ITEM_TYPES.has(block.type)
+  return typeof block.type === 'string' && NESTABLE_BLOCK_TYPES.has(block.type)
 }
 
 function hasUsableBlockId(block: Record<string, unknown>): boolean {

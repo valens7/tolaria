@@ -2,6 +2,8 @@ import type { SidebarSelection } from '../types'
 
 export const INBOX_SELECTION: SidebarSelection = { kind: 'filter', filter: 'inbox' }
 export const ALL_NOTES_SELECTION: SidebarSelection = { kind: 'filter', filter: 'all' }
+export const MORA_HOME_SELECTION: SidebarSelection = { kind: 'moraHome' }
+export const MORA_MEMOS_HOME_SELECTION: SidebarSelection = { kind: 'moraMemosHome' }
 
 export function isExplicitOrganizationEnabled(explicitOrganization?: boolean | null): boolean {
   return explicitOrganization !== false

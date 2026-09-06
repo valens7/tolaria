@@ -12,6 +12,7 @@ import {
   createDateTimeSlashMenuItems,
   createHtmlBlockSlashMenuItem,
   createMathSlashMenuItem,
+  createMoraToggleSlashMenuItem,
   filterTolariaFormattingToolbarItems,
   filterTolariaSlashMenuItems,
   getTolariaBlockTypeSelectItems,
@@ -24,6 +25,7 @@ import { trackEvent } from '../lib/telemetry'
 import { MATH_BLOCK_TYPE } from '../utils/mathMarkdown'
 import { mermaidFenceSource } from '../utils/mermaidMarkdown'
 import { CALLOUT_BLOCK_TYPE } from '../utils/calloutMarkdown'
+import { MORA_TOGGLE_BLOCK_TYPE } from '../utils/moraToggleMarkdown'
 import type { ObsidianCalloutType } from '../utils/calloutCatalog'
 import { calloutIconForType } from './calloutIcons'
 
@@ -353,6 +355,25 @@ describe('tolariaEditorFormatting', () => {
     expect(trackEvent).toHaveBeenCalledWith('editor_callout_slash_command_used', {
       type: 'tip',
     })
+  })
+
+  it('creates an expanded Mora Toggle block from the slash menu', () => {
+    const fixture = createSlashCommandEditorFixture()
+    const item = createMoraToggleSlashMenuItem(fixture.editor, { toggleTitle: 'Toggle' })
+
+    expect(item).toEqual(expect.objectContaining({
+      aliases: expect.arrayContaining(['collapse', 'details']),
+      key: 'mora_toggle',
+      title: 'Toggle',
+    }))
+
+    item.onItemClick()
+
+    expect(fixture.replaceBlocks).toHaveBeenCalledWith([fixture.block], [{
+      props: { collapsed: false },
+      type: MORA_TOGGLE_BLOCK_TYPE,
+    }])
+    expect(trackEvent).toHaveBeenCalledWith('editor_mora_toggle_slash_command_used')
   })
 
   it('uses a distinct Phosphor icon for every default callout type', () => {

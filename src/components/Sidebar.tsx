@@ -69,6 +69,7 @@ interface SidebarProps {
   canGoBack?: boolean
   canGoForward?: boolean
   loading?: boolean
+  showMoraNavigation?: boolean
 }
 
 interface SidebarNavigationProps
@@ -102,6 +103,7 @@ interface SidebarNavigationProps
   | 'onCreateNewType'
   | 'locale'
   | 'loading'
+  | 'showMoraNavigation'
 > {
   activeCount: number
   archivedCount: number
@@ -393,6 +395,7 @@ function SidebarTopNavigation(props: SidebarNavigationProps) {
         archivedCount={props.archivedCount}
         locale={props.locale ?? 'en'}
         loading={props.loading ?? false}
+        showMoraNavigation={props.showMoraNavigation ?? props.vaultRootPath !== undefined}
       />
       {(props.loading || props.entries.some((entry) => entry.favorite && !entry.archived)) && (
         <SidebarFavoritesNavigation
@@ -638,6 +641,7 @@ function SidebarRuntimeNavigation({
       inboxCount={props.inboxCount}
       locale={props.locale}
       loading={props.loading}
+      showMoraNavigation={props.showMoraNavigation}
       onCreateNewType={props.onCreateNewType}
       activeCount={runtime.activeCount}
       archivedCount={runtime.archivedCount}

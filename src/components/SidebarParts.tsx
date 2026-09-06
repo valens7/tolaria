@@ -39,7 +39,12 @@ export function isSelectionActive(current: SidebarSelection, check: SidebarSelec
   switch (check.kind) {
     case 'filter':
       return (current as typeof check).filter === check.filter
+    case 'moraHome':
+    case 'moraMemosHome':
     case 'moraMemoTimeline':
+      return true
+    case 'moraLearningFeed':
+    case 'moraContinueReview':
       return true
     case 'sectionGroup':
       return (current as typeof check).type === check.type

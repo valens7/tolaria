@@ -19,6 +19,7 @@ import { viewMatchesSelection } from './viewIdentity'
 import { wikilinkTarget, resolveEntry } from './wikilink'
 import { buildTypeVisibilityLookup, isSectionEntryVisibleForType } from './typeVisibility'
 import { moraMemoIdentityFromEntry } from '../mora/moraMemoSourcePaths'
+import { shouldContinueMoraReview, shouldSurfaceMoraLearningItem } from '../mora/moraLearningItems'
 
 export type NoteListFilter = 'open' | 'archived'
 
@@ -541,8 +542,15 @@ function filterByKind(
   options: FilterEntriesOptions,
 ): VaultEntry[] {
   if (selection.kind === 'entity') return []
+  if (selection.kind === 'moraHome' || selection.kind === 'moraMemosHome') return []
   if (selection.kind === 'moraMemoTimeline') return entries.filter((entry) => (
     !entry.archived && moraMemoIdentityFromEntry(entry) !== null
+  ))
+  if (selection.kind === 'moraLearningFeed') return entries.filter((entry) => (
+    !entry.archived && shouldSurfaceMoraLearningItem(entry)
+  ))
+  if (selection.kind === 'moraContinueReview') return entries.filter((entry) => (
+    !entry.archived && shouldContinueMoraReview(entry)
   ))
   if (selection.kind === 'view') return filterViewEntries(entries, selection, options.views)
   if (selection.kind === 'folder') return filterFolderEntries(entries, selection, options.subFilter)

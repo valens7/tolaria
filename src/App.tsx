@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Sidebar } from './components/Sidebar'
 import { NoteList } from './components/NoteList'
 import { LazyEditor } from './components/LazyEditor'
+import { MoraLearningControls } from './components/MoraLearningControls'
+import { MoraHomeView } from './components/MoraHomeView'
+import { MoraMemosHomeView } from './components/MoraMemosHomeView'
 import { ResizeHandle } from './components/ResizeHandle'
 import { CreateTypeDialog } from './components/CreateTypeDialog'
 import { CreateViewDialog } from './components/CreateViewDialog'
@@ -108,7 +111,7 @@ import {
 } from './lib/vaultAiGuidance'
 import { hasNoteIconValue } from './utils/noteIcon'
 import {
-  INBOX_SELECTION,
+  MORA_HOME_SELECTION,
   isExplicitOrganizationEnabled,
   sanitizeSelectionForOrganization,
 } from './utils/organizationWorkflow'
@@ -157,7 +160,7 @@ declare global {
   }
 }
 
-const DEFAULT_SELECTION: SidebarSelection = INBOX_SELECTION
+const DEFAULT_SELECTION: SidebarSelection = MORA_HOME_SELECTION
 
 /** Wraps useEditorSave to also keep outgoingLinks in sync on save and on content change. */
 function App() {
@@ -556,11 +559,25 @@ function MainApp({ noteWindowParams }: { noteWindowParams: NoteWindowParams | nu
     onOpenExternalFile: fileActions.openExternalFile,
   })
   const {
+    handleCreateNoteImmediate,
     handleSelectNote,
     handleReplaceActiveTab,
     closeAllTabs,
     openTabWithContent,
   } = notes
+  const handleCaptureMemo = useCallback((content: string) => {
+    handleCreateNoteImmediate('Memo', {
+      creationPath: 'mora_memo_capture',
+      folderPath: '10 Sources/10 Memos',
+      initialContent: content,
+    })
+  }, [handleCreateNoteImmediate])
+  const handleOpenMoraMemo = useCallback((entry: VaultEntry) => {
+    // Enter the existing neighborhood flow so Escape/back restores Memos Home
+    // instead of leaving the user in a detached donor workspace.
+    handleSelectNote(entry)
+    handleEnterNeighborhood(entry)
+  }, [handleEnterNeighborhood, handleSelectNote])
   const noteActiveTabPath = notes.activeTabPath
   const noteActiveTabPathRef = notes.activeTabPathRef
   useLastActiveNote({
@@ -1720,6 +1737,9 @@ function MainApp({ noteWindowParams }: { noteWindowParams: NoteWindowParams | nu
 
   const noteListModifiedFiles = isChangesSelection ? selectedChangesModifiedFiles : undefined
   const noteListModifiedFilesError = isChangesSelection ? gitSurfaces.changesModifiedFilesError : null
+  const isMoraHome = effectiveSelection.kind === 'moraHome'
+  const isMoraMemosHome = effectiveSelection.kind === 'moraMemosHome'
+  const isMoraSurface = isMoraHome || isMoraMemosHome
 
   return (
     <AppPreferencesProvider appLocale={appLocale} dateDisplayFormat={dateDisplayFormat}>
@@ -1733,7 +1753,7 @@ function MainApp({ noteWindowParams }: { noteWindowParams: NoteWindowParams | nu
               <ResizeHandle onResize={layout.handleSidebarResize} />
             </>
           )}
-          {noteListVisible && (
+          {noteListVisible && !isMoraSurface && (
             <>
               <div className={`app__note-list${aiActivity.highlightElement === 'notelist' ? ' ai-highlight' : ''}`} style={{ width: layout.noteListWidth }}>
                 {effectiveSelection.kind === 'filter' && effectiveSelection.filter === 'pulse' ? (
@@ -1746,7 +1766,15 @@ function MainApp({ noteWindowParams }: { noteWindowParams: NoteWindowParams | nu
             </>
           )}
           <div className={`app__editor${aiActivity.highlightElement === 'editor' || aiActivity.highlightElement === 'tab' ? ' ai-highlight' : ''}`}>
-            <LazyEditor
+            {isMoraHome && <MoraHomeView locale={appLocale} onCapture={handleCaptureMemo} onSelect={handleSetSelection} />}
+            {isMoraMemosHome && <MoraMemosHomeView entries={visibleEntries} locale={appLocale} onCapture={handleCaptureMemo} onOpenMemo={handleOpenMoraMemo} />}
+            {!isMoraSurface && <>
+              <MoraLearningControls
+                entry={activeTab?.entry ?? null}
+                locale={appLocale}
+                onUpdateFrontmatter={notes.handleUpdateFrontmatter}
+              />
+              <LazyEditor
               tabs={notes.tabs}
               activeTabPath={notes.activeTabPath}
               isVaultLoading={isVaultContentLoading}
@@ -1822,7 +1850,8 @@ function MainApp({ noteWindowParams }: { noteWindowParams: NoteWindowParams | nu
               flushPendingRawContentRef={flushPendingRawContentRef}
               onToast={setToastMessage}
               locale={appLocale}
-            />
+              />
+            </>}
           </div>
         </div>
         <UpdateBanner status={updateStatus} actions={updateActions} locale={appLocale} />

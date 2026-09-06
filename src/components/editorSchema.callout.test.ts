@@ -59,6 +59,28 @@ describe('editor callout schema', () => {
     expect(injectCalloutBlocks(parsed).at(0)).toMatchObject({ type: 'quote' })
   })
 
+  it('hydrates and round-trips Mora Toggle collapse state through the editor schema', async () => {
+    const markdown = [
+      '> [!mora-toggle]- Project context',
+      '> **Hidden** detail',
+    ].join('\n')
+    const editor = BlockNoteEditor.create({ schema })
+    const parsed = await editor.tryParseMarkdownToBlocks(markdown)
+    const injected = injectRichEditorMarkdownBlocks(parsed)
+    editor.replaceBlocks(editor.document, injected as Parameters<typeof editor.replaceBlocks>[1])
+
+    expect(editor.document.at(0)).toMatchObject({
+      props: { collapsed: true },
+      content: [{ type: 'text', text: 'Project context' }],
+      children: [{ content: [
+        { type: 'text', text: 'Hidden', styles: { bold: true } },
+        { type: 'text', text: ' detail' },
+      ] }],
+      type: 'moraToggle',
+    })
+    expect(serializeRichEditorBlocksToMarkdown({ blocks: editor.document, editor })).toBe(`${markdown}\n`)
+  })
+
   it('ignores legacy props that are absent from the current callout schema', async () => {
     const editor = BlockNoteEditor.create({ schema })
     const parsed = await editor.tryParseMarkdownToBlocks('> [!note] Legacy')

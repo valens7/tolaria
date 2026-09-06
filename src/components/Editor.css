@@ -625,3 +625,56 @@ body.mac-chrome .app:not(:has(.app__sidebar), :has(.app__note-list)) .breadcrumb
 .tolaria-callout__body[hidden] {
   display: none;
 }
+
+.mora-toggle {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.mora-toggle__button {
+  display: inline-flex;
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.mora-toggle__button:hover,
+.mora-toggle__button:focus-visible {
+  background: var(--state-hover);
+  color: var(--text-primary);
+}
+
+.mora-toggle__button > svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.mora-toggle__content {
+  position: relative;
+  min-width: 2px;
+  min-height: 1.35rem;
+  flex: 1;
+  outline: 0;
+}
+
+.mora-toggle__content:has(> .ProseMirror-trailingBreak:only-child)::before {
+  position: absolute;
+  color: var(--text-muted);
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+
+.editor__blocknote-container .bn-block:has(
+  > .react-renderer > .bn-block-content > .mora-toggle[data-collapsed="true"]
+) > .bn-block-group {
+  display: none;
+}

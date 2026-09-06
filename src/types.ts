@@ -290,7 +290,11 @@ export type InboxPeriod = 'week' | 'month' | 'quarter' | 'all'
 
 export type SidebarSelection =
   | { kind: 'filter'; filter: SidebarFilter }
+  | { kind: 'moraHome' }
+  | { kind: 'moraMemosHome' }
   | { kind: 'moraMemoTimeline' }
+  | { kind: 'moraLearningFeed' }
+  | { kind: 'moraContinueReview' }
   | { kind: 'sectionGroup'; type: string }
   | { kind: 'folder'; path: string; rootPath?: string }
   | { kind: 'entity'; entry: VaultEntry }
