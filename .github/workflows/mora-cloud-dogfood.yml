@@ -55,6 +55,8 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_POSTHOG_KEY: ${{ secrets.VITE_POSTHOG_KEY }}
           VITE_POSTHOG_HOST: ${{ secrets.VITE_POSTHOG_HOST }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.MORA_TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.MORA_TAURI_KEY_PASSWORD }}
         run: pnpm tauri build --target aarch64-apple-darwin --bundles app
 
       - name: Seal app and create dogfood DMG
